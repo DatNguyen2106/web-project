@@ -1,0 +1,26 @@
+.App {
+    text-align: center;
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: auto;
+}
+.form input {
+    width: 300px;
+    height: 60px;
+    margin: 10px;
+}
+.lecturers {    
+    width: 600px;
+    height: 140px;
+    border: 2px solid black;
+    border-radius: 15px;
+    margin: 30px;
+}
+#updateInput {
+    width: 50px;
+    height: 20px;
+    margin-bottom: 10px;
+}
