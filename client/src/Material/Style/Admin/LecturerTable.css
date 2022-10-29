@@ -1,0 +1,106 @@
+.admin-lecturer-list{
+    background-color: #d6d6c2;
+}
+
+.form{
+    text-align: left;
+    border-bottom: 1px solid black;
+}
+
+.form-title,.table-title{
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 150%;
+    padding: 30px 0;
+}
+
+.form-title:hover,.table-title:hover{
+    background-color: #ccccb3;
+}
+
+.form-content{
+    margin: 30px 30px;
+}
+
+.form-content-row{
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.form-content-row > label{
+    width: 20%;
+}
+
+.form-content-row > input{
+    width: 50%;
+    margin-right: 5%;
+}
+
+.form-button-area{
+    display: flex;
+    justify-content: right;
+}
+
+.form-add-button, .form-cancel-button, .search-button{
+    background-color: #33ff33;
+    cursor: pointer;
+    height: 40px;
+    width: 130px;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-weight: normal;
+    font-size: 120%;
+}
+
+.form-add-button{
+    margin-right: 5%;
+}
+
+.form-cancel-button{
+    background-color: #94b8b8;
+}
+
+.table-content{
+    text-align: left;
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-content th {
+    height: 70px;
+    font-weight: normal;
+    font-size: 130%;
+}
+
+.search-button{
+    font-size: 90%;
+    float: right;
+}
+
+.table-content th:first-child, .table-content td:first-child {
+    padding-left:30px
+}
+
+.table-content td {
+    height: 50px;
+}
+
+.icon{
+    float: right;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    margin-right: 20px;
+}
+
+.delete_icon{
+    padding-right: 10px;
+    width: 11px;
+}
+
+.table-content tbody tr:hover{
+    background-color: #ccccb3;
+}
