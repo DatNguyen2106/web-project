@@ -26,11 +26,9 @@ const LecturerTable = () => {
             supervisor: lecturerListSearch.sup,
             page: activePage.toString()
         }
-        console.log(body)
         Axios.post("http://localhost:5000/admin/get/lecturers", body, config).then((response) => {
           setLecturerList(response.data.list);
           setTotalPage(response.data.totalPage);
-          console.log(response.data);
         });
     }, [reload, activePage]);
 
@@ -92,7 +90,6 @@ const LecturerTable = () => {
             let url = isAdd ? `http://localhost:5000/admin/add/lecturer` : `http://localhost:5000/admin/update/lecturer/${lecturerFormContent.id}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{
-                console.log(response);
                 setLecturerFormContent({id: "", userName:"", fullName:"", email:"", sup: ""})
                 setLecturerFormError({id: "", userName:"", fullName:"", email:"", sup: ""})
                 setIsAdd(true)

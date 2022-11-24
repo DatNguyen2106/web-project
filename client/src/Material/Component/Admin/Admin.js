@@ -9,6 +9,7 @@ const Admin = () => {
         Axios
             .get("http://localhost:4000/roles", config)
             .then(res => {
+                console.log(res.data.role)
                 if(!res.data.role.includes("admin")){
                     window.location.replace("/denied");
                 }
@@ -16,8 +17,8 @@ const Admin = () => {
             .catch(e => {
                 console.log("catch");
             })
-    });
-
+    }, []);
+    
     return (
         <>
             <Routes>
