@@ -38,7 +38,7 @@ app.post('/api/insert/lecturer', (req, res) => {
     const sqlInsert = "INSERT INTO lecturers (lecturer_id, lecturer_user_name, fullname, email, supervisor) VALUES (?,?,?,?,?)"; //
     db.query(sqlInsert, [lecturer_id, lecturer_user_name, lecturer_fullName, lecturer_email, lecturer_supervisor], (err, result) => {
         if (err) throw err;
-        console.log(result);
+        res.json(result);
     })
 })
 app.delete('/api/delete/lecturer/:lecturer_id', (req,res) => {
