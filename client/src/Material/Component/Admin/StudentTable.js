@@ -103,9 +103,9 @@ const StudentTable = () => {
             let url = isAdd ? `http://localhost:5000/admin/add/student` : `http://localhost:5000/admin/update/student/${studentFormContent.id}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{
+                setIsAdd(true)
                 setStudentFormContent({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
                 setStudentFormError({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
-                setIsAdd(true)
                 setReload(!reload)
             }).catch(e => {
                 console.log("catch");
@@ -120,6 +120,7 @@ const StudentTable = () => {
     }
 
     const editRow = (id) => {
+        console.log(id)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios
             .get(`http://localhost:5000/admin/get/student/${id}`, config)

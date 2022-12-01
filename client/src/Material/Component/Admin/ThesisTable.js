@@ -19,8 +19,8 @@ const ThesisTable = () => {
         slot: "",
         slotMax: "",
         step: "",
-        activateDefense: "",
         activateRegistration: "",
+        activateDefense: "",
         // availableDay: "",
         // defenseDay: "",
         numberHardCopies: "",
@@ -50,7 +50,6 @@ const ThesisTable = () => {
             page: activePage.toString()
         }
         Axios.post("http://localhost:5000/admin/get/theses", body, config).then((response) => {
-            console.log(response.data)
             setThesisList(response.data.list);
             setTotalPage(response.data.totalPage);
             if (activePage > response.data.totalPage) setActivePage(response.data.totalPage);
@@ -77,12 +76,10 @@ const ThesisTable = () => {
 
     const validateForm = () => {
         let formError = {...defaultForm};
-        if(isAdd){
-            if(!thesisFormContent.id){
-                formError.id = "Id cannot be empty"
-            }else if(!/^-?\d+$/.test(thesisFormContent.id)){
-                formError.id = "Id must be a number"
-            }
+        if(!thesisFormContent.id){
+            formError.id = "Id cannot be empty"
+        }else if(!/^-?\d+$/.test(thesisFormContent.id)){
+            formError.id = "Id must be a number"
         }
         if(!thesisFormContent.topic){
             formError.topic = "Topic cannot be empty"
@@ -90,19 +87,26 @@ const ThesisTable = () => {
         if(!thesisFormContent.field){
             formError.field = "Field Name cannot be empty"
         }
-        if(!thesisFormContent.idSup1){
-            formError.idSup1 = "Supervisor 1's ID cannot be empty"
+        if(isAdd){
+            if(!thesisFormContent.idSup1){
+                formError.idSup1 = "Supervisor 1's ID cannot be empty"
+            }else if(!/^-?\d+$/.test(thesisFormContent.idSup1)){
+                formError.idSup1 = "Supervisor 1's ID must be a number"
+            }
         }
         if(!thesisFormContent.slotMax){
             formError.slotMax = "Slot Maximum cannot be empty"
+        }else if(!/^-?\d+$/.test(thesisFormContent.slotMax)){
+            formError.idSup1 = "Slot Maximum must be a number"
         }
-        if(!thesisFormContent.activateDefense){
-            formError.activateDefense = "Activate Defense cannot be empty"
+        if(!isAdd){
+            if(!thesisFormContent.activateRegistration){
+                formError.activateRegistration = "Activate Registration cannot be empty"
+            }
+            if(!thesisFormContent.activateDefense){
+                formError.activateDefense = "Activate Defense cannot be empty"
+            }
         }
-        if(!thesisFormContent.activateRegistration){
-            formError.activateRegistration = "Activate Registration cannot be empty"
-        }
-
         setThesisFormError(formError);
     }
 
@@ -111,22 +115,27 @@ const ThesisTable = () => {
     }, [thesisFormContent]);
 
     const submitForm = () => {
-        if (thesisFormError.id === "" && thesisFormError.topic === ""){
+        if (thesisFormError.id === "" && thesisFormError.topic === "" && thesisFormError.field === "" && thesisFormError.idSup1 === "" && thesisFormError.slotMax === "" && thesisFormError.activateRegistration === "" && thesisFormError.activateDefense === ""){
             let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
             let body = {
                 thesisTopic: thesisFormContent.topic,
-                fullname: thesisFormContent.fullName,
-                email: thesisFormContent.email,
-                slot: thesisFormContent.slot,
-                slotMaximum: thesisFormContent.slotMax
+                thesisField: thesisFormContent.field,
+                lecturer1_id: thesisFormContent.idSup1,
+                slotMaximum: thesisFormContent.slotMax,
+                activateRegistration: thesisFormContent.activateRegistration,
+                activateDefense: thesisFormContent.activateDefense,
+                numberOfHardCopies: thesisFormContent.numberHardCopies,
+                printRequirements: thesisFormContent.printRequirements,
+                templateFiles: thesisFormContent.templateFiles,
+                submissionDeadline: thesisFormContent.submissionDeadline,
             }
-            if(isAdd) {body.id = parseInt(thesisFormContent.id)}
+            if(isAdd) {body.thesisId = parseInt(thesisFormContent.id)}
             let url = isAdd ? `http://localhost:5000/admin/add/thesis` : `http://localhost:5000/admin/update/thesis/${thesisFormContent.id}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{
-                setThesisFormContent({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
-                setThesisFormError({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
                 setIsAdd(true)
+                setThesisFormContent({...defaultForm})
+                setThesisFormError({...defaultForm})
                 setReload(!reload)
             }).catch(e => {
                 console.log("catch");
@@ -135,8 +144,8 @@ const ThesisTable = () => {
     };
 
     const cancelForm = () => {
-        setThesisFormContent({id: "", topic:"", sup1:"", sup2:"", slot: "", slotMax:""})
-        setThesisFormError({id: "", topic:"", sup1:"", sup2:"", slot: "", slotMax:""})
+        setThesisFormContent({...defaultForm})
+        setThesisFormError({...defaultForm})
         setIsAdd(true);
     }
 
@@ -145,7 +154,8 @@ const ThesisTable = () => {
         Axios
             .get(`http://localhost:5000/admin/get/thesis/${id}`, config)
             .then((res)=>{
-                console.log(res.data)
+                setIsAdd(false);
+                setOpenForm(true);
                 let studentList = []
                 for (const i of res.data){
                     studentList.push(i["student_id"])
@@ -162,8 +172,8 @@ const ThesisTable = () => {
                     slot: res.data[0].slot,
                     slotMax: res.data[0].slot_maximum,
                     step: res.data[0].step,
-                    activateDefense: res.data[0].activate_defense,
-                    activateRegistration: res.data[0].activate_registration,
+                    activateDefense: res.data[0].activate_defense.toString(),
+                    activateRegistration: res.data[0].activate_registration.toString(),
                     // availableDay: res.data[0].available_day,
                     // defenseDay: res.data[0].defense_day,
                     numberHardCopies: res.data[0].number_hard_copies,
@@ -171,8 +181,6 @@ const ThesisTable = () => {
                     templateFiles: res.data[0].template_files,
                     submissionDeadline: res.data[0].submission_deadline,
                 })
-                setIsAdd(false);
-                setOpenForm(true);
             })
             .catch((e)=>{
                 console.log("catch")
@@ -215,14 +223,14 @@ const ThesisTable = () => {
                         <InputRow label="Thesis ID :" value={thesisFormContent.id} field="id" error={thesisFormError.id} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
                         <InputRow label="Thesis Topic :" value={thesisFormContent.topic} field="topic" error={thesisFormError.topic} changeContent={changeForm}/>
                         <InputRow label="Thesis Field :" value={thesisFormContent.field} field="field" error={thesisFormError.field} changeContent={changeForm}/>
-                        <InputRow label="Thesis Supervisor 1 :" value={thesisFormContent.idSup1 ? thesisFormContent.idSup1 + " - " + thesisFormContent.titleSup1 : ""} field="idSup1" error={thesisFormError.idSup1} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
-                        {isAdd ? null : <InputRow label="Thesis Supervisor 2 :" value={thesisFormContent.idSup2 ? thesisFormContent.idSup2 + " - " + thesisFormContent.titleSup2 : ""} field="idSup2" isDisabled="disabled" changeContent={changeForm}/>}
+                        <InputRow label="Thesis Supervisor 1 :" value={thesisFormContent.idSup1 ? thesisFormContent.idSup1 : ""} field="idSup1" error={thesisFormError.idSup1} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
+                        {isAdd ? null : <InputRow label="Thesis Supervisor 2 :" value={thesisFormContent.idSup2 ? thesisFormContent.idSup2 : ""} field="idSup2" isDisabled="disabled" changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Student :" value={thesisFormContent.student ? thesisFormContent.student.toString() : ""} field="student" isDisabled="disabled" changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Slot :" value={thesisFormContent.slot} field="slot" isDisabled="disabled" changeContent={changeForm}/>}
                         <InputRow label="Thesis Slot Maximum :" value={thesisFormContent.slotMax} field="slotMax" error={thesisFormError.slotMax} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
                         {isAdd ? null : <InputRow label="Thesis Step :" value={thesisFormContent.step} field="step" isDisabled="disabled" changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Activate Defense :" value={thesisFormContent.activateDefense} field="activateDefense" error={thesisFormError.activateDefense} isDisabled={null} changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Activate Registration :" value={thesisFormContent.activateRegistration} field="activateRegistration" error={thesisFormError.activateRegistration} isDisabled={null} changeContent={changeForm}/>}
+                        {isAdd ? null : <InputRow label="Thesis Activate Defense :" value={thesisFormContent.activateDefense} field="activateDefense" error={thesisFormError.activateDefense} isDisabled={null} changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Number Of Hard Copies :" value={thesisFormContent.numberHardCopies} field="numberHardCopies" error={thesisFormError.numberHardCopies} isDisabled={null} changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Print Requirements :" value={thesisFormContent.printRequirements} field="printRequirements" error={thesisFormError.printRequirements} isDisabled={null} changeContent={changeForm}/>}
                         {isAdd ? null : <InputRow label="Thesis Template Files :" value={thesisFormContent.templateFiles} field="templateFiles" error={thesisFormError.templateFiles} isDisabled={null} changeContent={changeForm}/>}

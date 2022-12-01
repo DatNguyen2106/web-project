@@ -5,7 +5,7 @@ const InputRow = (props) => {
             <label>{props.label}</label>
             <input
                 type="text" 
-                value={props.value}
+                value={props.value ? props.value : ""}
                 disabled={props.isDisabled}
                 onChange={(e) => props.changeContent(props.field, e.target.value)}>
             </input>

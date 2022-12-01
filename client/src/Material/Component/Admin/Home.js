@@ -6,7 +6,7 @@ import linkImage from '../../Images/logo192.png';
 import LecturerTable from "./LecturerTable";
 import StudentTable from "./StudentTable";
 import ThesisTable from "./ThesisTable";
-const Home = () => {
+const Home = (props) => {
     const [renderComponent, setRenderComponent] = useState("home");
     const [notifications, setNotifications] = useState([]);
 
@@ -15,6 +15,10 @@ const Home = () => {
         Axios.get("http://localhost:5000/getNotifications", config).then((response) => {
             setNotifications(response.data);
         });
+
+        props.socket.on("notificationSent", (res)=>{
+            setNotifications(res)
+        })
     }, [])
 
     const closePopUp = (e) => {

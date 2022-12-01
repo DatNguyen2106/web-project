@@ -100,9 +100,9 @@ const LecturerTable = () => {
             let url = isAdd ? `http://localhost:5000/admin/add/lecturer` : `http://localhost:5000/admin/update/lecturer/${lecturerFormContent.id}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{
+                setIsAdd(true)
                 setLecturerFormContent({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
                 setLecturerFormError({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
-                setIsAdd(true)
                 setReload(!reload)
             }).catch(e => {
                 console.log("catch");

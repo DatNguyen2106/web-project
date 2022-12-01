@@ -69,7 +69,7 @@ const App = () => {
             <div className="content">
                 <Routes>
                     <Route path="/login" element={<Login />} />
-                    <Route path="/admin/*" element={<Admin />} />
+                    <Route path="/admin/*" element={<Admin socket={socket}/>} />
                     <Route path="/lecturer/*" element={<Lecturer />} />
                     <Route path="/student/*" element={<Student />} />
                     <Route path="/denied" element={<Error message="Access denied."/>} />
