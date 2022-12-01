@@ -5,13 +5,13 @@ import PaginationBar from "../PaginationBar";
 import detail_icon from '../../Images/detail_icon.png';
 import change_icon from '../../Images/change_icon.png';
 import delete_icon from '../../Images/delete_icon.png';
-const LecturerTable = () => {
+const StudentTable = () => {
     const [reload, setReload] = useState(false);
     const [isAdd, setIsAdd] = useState(true);
-    const [lecturerFormContent, setLecturerFormContent] = useState({id: "", userName:"", fullName:"", title:"", email:"", sup: ""});
-    const [lecturerFormError, setLecturerFormError] = useState({id: "", userName:"", fullName:"", title:"", email:"", sup: ""});
-    const [lecturerListSearch, setLecturerListSearch] = useState({id: "", userName:"", fullName:"", title:"", email:"", sup: ""});
-    const [lecturerList, setLecturerList] = useState([]);
+    const [studentFormContent, setStudentFormContent] = useState({id: "", userName:"", fullName:"", email:"", intake: "", ects:""});
+    const [studentFormError, setStudentFormError] = useState({id: "", userName:"", fullName:"", email:"", intake: "", ects:""});
+    const [studentListSearch, setStudentListSearch] = useState({id: "", userName:"", fullName:"", email:"", intake: "", ects:""});
+    const [studentList, setStudentList] = useState([]);
     const [activePage, setActivePage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [openForm, setOpenForm] = React.useState(false);
@@ -19,30 +19,31 @@ const LecturerTable = () => {
     useEffect(() => {
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let body = {
-            id: lecturerListSearch.id,
-            username: lecturerListSearch.userName,
-            fullname: lecturerListSearch.fullName,
-            title: lecturerListSearch.title,
-            email: lecturerListSearch.email,
-            supervisor: lecturerListSearch.sup,
+            id: studentListSearch.id,
+            username: studentListSearch.userName,
+            fullname: studentListSearch.fullName,
+            email: studentListSearch.email,
+            intake: studentListSearch.intake,
+            ects: studentListSearch.ects,
             page: activePage.toString()
         }
-        Axios.post("http://localhost:5000/admin/get/lecturers", body, config).then((response) => {
-          setLecturerList(response.data.list);
-          setTotalPage(response.data.totalPage);
+        Axios.post("http://localhost:5000/admin/get/students", body, config).then((response) => {
+            setStudentList(response.data.list);
+            setTotalPage(response.data.totalPage);
+            if (activePage > response.data.totalPage) setActivePage(response.data.totalPage);
         });
     }, [reload, activePage]);
 
     const changeForm = (field, value) => {
-        setLecturerFormContent({
-            ...lecturerFormContent,
+        setStudentFormContent({
+            ...studentFormContent,
             [field]: value
         });
     };
 
     const changeSearch = (field, value) => {
-        setLecturerListSearch({
-            ...lecturerListSearch,
+        setStudentListSearch({
+            ...studentListSearch,
             [field]: value
         });
     };
@@ -52,56 +53,58 @@ const LecturerTable = () => {
     };
 
     const validateForm = () => {
-        let formError = {id: "", userName:"", fullName:"", title:"", email:"", sup: ""};
+        let formError = {id: "", userName:"", fullName:"", email:"", intake: "", ects: ""};
         if(isAdd){
-            if(!lecturerFormContent.id){
+            if(!studentFormContent.id){
                 formError.id = "Id cannot be empty"
-            }else if(!/^-?\d+$/.test(lecturerFormContent.id)){
+            }else if(!/^-?\d+$/.test(studentFormContent.id)){
                 formError.id = "Id must be a number"
             }
         }
-        if(!lecturerFormContent.userName){
+        if(!studentFormContent.userName){
             formError.userName = "User Name cannot be empty"
         }
-        if(!lecturerFormContent.fullName){
+        if(!studentFormContent.fullName){
             formError.fullName = "Full Name cannot be empty"
         }
-        if(!lecturerFormContent.title){
-            formError.title = "Title cannot be empty"
-        }
-        if(!lecturerFormContent.email){
+        if(!studentFormContent.email){
             formError.email = "Email cannot be empty"
-        }else if(!/^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/.test(lecturerFormContent.email)){
+        }else if(!/^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/.test(studentFormContent.email)){
             formError.email = "Email does not match email format"
         }
-        if(!lecturerFormContent.sup){
-            formError.sup = "Supervisor cannot be empty"
+        if(!studentFormContent.intake){
+            formError.intake = "Intake cannot be empty"
         }
-        setLecturerFormError(formError);
-        
+        if(isAdd){
+            if(!studentFormContent.ects){
+                formError.ects = "ECTS cannot be empty"
+            }else if(!/^-?\d+$/.test(studentFormContent.id)){
+                formError.ects = "ECTS must be a number"
+            }
+        }
+        setStudentFormError(formError);
     }
 
     useEffect(() => {
         validateForm();
-    }, [lecturerFormContent]);
+    }, [studentFormContent]);
 
     const submitForm = () => {
-        validateForm();
-        if (lecturerFormError.id === "" && lecturerFormError.userName === "" && lecturerFormError.fullName === "" && lecturerFormError.title === "" && lecturerFormError.email === "" && lecturerFormError.sup === ""){
+        if (studentFormError.id === "" && studentFormError.userName === "" && studentFormError.fullName === "" && studentFormError.email === "" && studentFormError.intake === "" && studentFormError.ects === ""){
             let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
             let body = {
-                username: lecturerFormContent.userName,
-                fullname: lecturerFormContent.fullName,
-                title: lecturerFormContent.title,
-                email: lecturerFormContent.email,
-                supervisor: lecturerFormContent.sup,
+                username: studentFormContent.userName,
+                fullname: studentFormContent.fullName,
+                email: studentFormContent.email,
+                intake: studentFormContent.intake,
+                ects: studentFormContent.ects
             }
-            if(isAdd) {body.id = parseInt(lecturerFormContent.id)}
-            let url = isAdd ? `http://localhost:5000/admin/add/lecturer` : `http://localhost:5000/admin/update/lecturer/${lecturerFormContent.id}`
+            if(isAdd) {body.id = parseInt(studentFormContent.id)}
+            let url = isAdd ? `http://localhost:5000/admin/add/student` : `http://localhost:5000/admin/update/student/${studentFormContent.id}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{
-                setLecturerFormContent({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
-                setLecturerFormError({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
+                setStudentFormContent({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
+                setStudentFormError({id: "", userName:"", fullName:"", email:"", intake: "", ects: ""})
                 setIsAdd(true)
                 setReload(!reload)
             }).catch(e => {
@@ -111,23 +114,23 @@ const LecturerTable = () => {
     };
 
     const cancelForm = () => {
-        setLecturerFormContent({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
-        setLecturerFormError({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
+        setStudentFormContent({id: "", userName:"", fullName:"", email:"", intake: "", ects:""})
+        setStudentFormError({id: "", userName:"", fullName:"", email:"", intake: "", ects:""})
         setIsAdd(true);
     }
 
     const editRow = (id) => {
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios
-            .get(`http://localhost:5000/admin/get/lecturer/${id}`, config)
+            .get(`http://localhost:5000/admin/get/student/${id}`, config)
             .then((res)=>{
-                setLecturerFormContent({
+                setStudentFormContent({
                     id: res.data.id, 
                     userName: res.data.userName, 
                     fullName: res.data.fullName, 
-                    title: res.data.title,
                     email: res.data.email, 
-                    sup: res.data.supervisor
+                    intake: res.data.intake,
+                    ects: res.data.ects
                 })
                 setIsAdd(false);
                 setOpenForm(true);
@@ -139,7 +142,7 @@ const LecturerTable = () => {
 
     const deleteRow = (id) => {
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
-        Axios.delete(`http://localhost:5000/admin/delete/lecturer/${id}`, config).then((response) => {
+        Axios.delete(`http://localhost:5000/admin/delete/student/${id}`, config).then((response) => {
             setReload(!reload);
         }).catch(e => {
             console.log("catch");
@@ -167,69 +170,69 @@ const LecturerTable = () => {
     return (
         <div className="admin-lecturer-list">
             <div className="form">
-                <div className="form-title" onClick={handleOpenForm}>Lecturer Form</div>
+                <div className="form-title" onClick={handleOpenForm}>Student Form</div>
                 {openForm ? (
                     <div className="form-content">
                         <div className="form-content-row">
-                            <label>Lecturer ID :</label>
+                            <label>Student ID :</label>
                             <input
                                 type="text" 
-                                name="lecturer_id" 
-                                value={lecturerFormContent.id} 
+                                name="student_id" 
+                                value={studentFormContent.id} 
                                 onChange={(e) => changeForm("id", e.target.value)}
                                 disabled={isAdd ? null : "disabled"}>
                             </input>
-                            <div className="form-content-row-error">{lecturerFormError.id}</div>
+                            <div className="form-content-row-error">{studentFormError.id}</div>
                         </div>
                         <div className="form-content-row">
-                            <label>Lecturer User Name :</label>
+                            <label>Student User Name :</label>
                             <input 
                                 type="text" 
-                                name="lecturer_user_name" 
-                                value={lecturerFormContent.userName} 
+                                name="student_user_name" 
+                                value={studentFormContent.userName} 
                                 onChange={(e) => changeForm("userName", e.target.value)}>
                             </input>
-                            <div className="form-content-row-error">{lecturerFormError.userName}</div>
+                            <div className="form-content-row-error">{studentFormError.userName}</div>
                         </div>
                         <div className="form-content-row">
-                            <label>Lecturer Full Name :</label>
+                            <label>Student Full Name :</label>
                             <input 
                                 type="text" 
-                                name="lecturer_fullName" 
-                                value={lecturerFormContent.fullName} 
+                                name="student_fullName" 
+                                value={studentFormContent.fullName} 
                                 onChange={(e) => changeForm("fullName", e.target.value)}>
                             </input>
-                            <div className="form-content-row-error">{lecturerFormError.fullName}</div>
+                            <div className="form-content-row-error">{studentFormError.fullName}</div>
                         </div>
                         <div className="form-content-row">
-                            <label>Lecturer Title :</label>
+                            <label>Student Email :</label>
                             <input 
                                 type="text" 
-                                name="lecturer_title" 
-                                value={lecturerFormContent.title} 
-                                onChange={(e) => changeForm("title", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.title}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Lecturer Email :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_email" 
-                                value={lecturerFormContent.email} 
+                                name="student_email" 
+                                value={studentFormContent.email} 
                                 onChange={(e) => changeForm("email", e.target.value)}>
                             </input>
-                            <div className="form-content-row-error">{lecturerFormError.email}</div>
+                            <div className="form-content-row-error">{studentFormError.email}</div>
                         </div>
                         <div className="form-content-row">
-                            <label>Supervisor :</label>
+                            <label>Intake :</label>
                             <input 
                                 type="text" 
-                                name="lecturer_supervisor" 
-                                value={lecturerFormContent.sup} 
-                                onChange={(e) => changeForm("sup", e.target.value)}>
+                                name="student_intake" 
+                                value={studentFormContent.intake} 
+                                onChange={(e) => changeForm("intake", e.target.value)}>
                             </input>
-                            <div className="form-content-row-error">{lecturerFormError.sup}</div>
+                            <div className="form-content-row-error">{studentFormError.intake}</div>
+                        </div>
+                        <div className="form-content-row">
+                            <label>ECTS :</label>
+                            <input 
+                                type="text" 
+                                name="student_ects" 
+                                value={studentFormContent.ects} 
+                                onChange={(e) => changeForm("ects", e.target.value)}>
+                            </input>
+                            <div className="form-content-row-error">{studentFormError.ects}</div>
                         </div>
                         <div className="form-button-area">
                             <button className="form-add-button" onClick={submitForm}>{isAdd ? "Add" : "Update"}</button>
@@ -239,56 +242,56 @@ const LecturerTable = () => {
                 ) : null}
             </div>
             <div className="table">
-                <div className="table-title">Lecturer Table</div>
+                <div className="table-title">Student Table</div>
                 <table className="table-content">
                     <thead>
                         <tr>
                             <th style={{paddingLeft:"1%"}}>
                                 <input 
                                     type="text" 
-                                    name="lecturer_id" 
-                                    value={lecturerListSearch.id} 
+                                    name="student_id" 
+                                    value={studentListSearch.id} 
                                     onChange={(e) => changeSearch("id", e.target.value)}>
                                 </input>
                             </th>
                             <th>
                                 <input 
                                     type="text" 
-                                    name="lecturer_user_name" 
-                                    value={lecturerListSearch.userName} 
+                                    name="student_user_name" 
+                                    value={studentListSearch.userName} 
                                     onChange={(e) => changeSearch("userName", e.target.value)}>
                                 </input>
                             </th>
                             <th>
                                 <input 
                                     type="text" 
-                                    name="lecturer_fullName" 
-                                    value={lecturerListSearch.fullName} 
+                                    name="student_fullName" 
+                                    value={studentListSearch.fullName} 
                                     onChange={(e) => changeSearch("fullName", e.target.value)}>
                                 </input>
                             </th>
                             <th>
                                 <input 
                                     type="text" 
-                                    name="lecturer_title" 
-                                    value={lecturerListSearch.title} 
-                                    onChange={(e) => changeSearch("title", e.target.value)}>
-                                </input>
-                            </th>
-                            <th>
-                                <input 
-                                    type="text" 
-                                    name="lecturer_email" 
-                                    value={lecturerListSearch.email} 
+                                    name="student_email" 
+                                    value={studentListSearch.email} 
                                     onChange={(e) => changeSearch("email", e.target.value)}>
                                 </input>
                             </th>
                             <th>
                                 <input 
                                     type="text" 
-                                    name="lecturer_supervisor" 
-                                    value={lecturerListSearch.sup} 
-                                    onChange={(e) => changeSearch("sup", e.target.value)}>
+                                    name="student_intake" 
+                                    value={studentListSearch.intake} 
+                                    onChange={(e) => changeSearch("intake", e.target.value)}>
+                                </input>
+                            </th>
+                            <th>
+                                <input 
+                                    type="text" 
+                                    name="student_ects" 
+                                    value={studentListSearch.ects} 
+                                    onChange={(e) => changeSearch("ects", e.target.value)}>
                                 </input>
                             </th>
                             <th style={{paddingRight:"1%"}}>
@@ -299,26 +302,26 @@ const LecturerTable = () => {
                             <th>ID</th>
                             <th>User Name</th>
                             <th>Full Name</th>
-                            <th>Title</th>
                             <th>Email</th>
-                            <th>Supervisor</th>
+                            <th>Intake</th>
+                            <th>ECTS</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {lecturerList.map((lecturer) => {
+                        {studentList.map((student) => {
                             return (
-                                <tr key={lecturer.lecturer_id}>
-                                    <td>{lecturer.lecturer_id}</td>
-                                    <td>{lecturer.lecturer_user_name}</td>
-                                    <td>{lecturer.fullname}</td>
-                                    <td>{lecturer.title}</td>
-                                    <td>{lecturer.email}</td>
-                                    <td>{lecturer.supervisor}</td>
+                                <tr key={student.student_id}>
+                                    <td>{student.student_id}</td>
+                                    <td>{student.student_user_name}</td>
+                                    <td>{student.fullname}</td>
+                                    <td>{student.email}</td>
+                                    <td>{student.intake}</td>
+                                    <td>{student.ects}</td>
                                     <td className="icon-column">
-                                        <img className="icon delete_icon" src={delete_icon} alt="delete_icon" onClick={() => deleteRow(lecturer.lecturer_id)}/>
+                                        <img className="icon delete_icon" src={delete_icon} alt="delete_icon" onClick={() => deleteRow(student.student_id)}/>
                                         <img className="icon" src={detail_icon} alt="detail_icon"/>
-                                        <img className="icon" src={change_icon} onClick={() => editRow(lecturer.lecturer_id)} alt="change_icon"/> 
+                                        <img className="icon" src={change_icon} onClick={() => editRow(student.student_id)} alt="change_icon"/> 
                                     </td>
                                 </tr>
                             )
@@ -332,4 +335,4 @@ const LecturerTable = () => {
     );
 };
 
-export default LecturerTable;
+export default StudentTable;

@@ -25,7 +25,6 @@ const App = () => {
                 }
                 await Axios
                     .post("http://localhost:4000/token", body).then((res) => {
-                        console.log(res.data);
                         localStorage.setItem("accessToken", res.data.accessToken);
                         localStorage.setItem("refreshToken", res.data.refreshToken);
                     })
@@ -35,13 +34,29 @@ const App = () => {
         } else clearInterval(TokenInterval);
     }, []);
     
-    
-
-    const [socket, setSocket] = useState(null);
-
+    var socket = io('http://localhost:3001', { transports : ['websocket'] });
     useEffect(() => {
-        setSocket(io("http://localhost:3001", { transports : ['websocket'] }));
+        socket.on("getText", (text) => {
+            //console.log(text)
+        })    
+        socket.on("connect", () => {    
+            // console.log(socket.id);
+            if(localStorage.getItem("accessToken")){
+                socket.emit("updateSocket", {token : localStorage.getItem("accessToken")});
+            }
+            // socket.on("notificationSent", (text) => console.log(text));
+            // socket.on("updateSocket", (text) => console.log(text))                                               
+        });
+        socket.on("getLecturers", (text) => {
+            // console.log(text)
+        })
     }, []);
+
+    // const [socket, setSocket] = useState(null);
+
+    // useEffect(() => {
+    //     setSocket(io("http://localhost:3001", { transports : ['websocket'] }));
+    // }, []);
 
     // var i = 0;
     // setInterval(() => {

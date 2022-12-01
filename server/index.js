@@ -34,7 +34,6 @@ app.post('/api/insert/lecturer', (req, res) => {
     const lecturer_fullName = req.body.lecturer_fullName;
     const lecturer_email = req.body.lecturer_email;
     const lecturer_supervisor = req.body.lecturer_supervisor;
-    console.log(lecturer_email, lecturer_id);
     const sqlInsert = "INSERT INTO lecturers (lecturer_id, lecturer_user_name, fullname, email, supervisor) VALUES (?,?,?,?,?)"; //
     db.query(sqlInsert, [lecturer_id, lecturer_user_name, lecturer_fullName, lecturer_email, lecturer_supervisor], (err, result) => {
         if (err) throw err;
@@ -52,11 +51,9 @@ app.delete('/api/delete/lecturer/:lecturer_id', (req,res) => {
 app.put('/api/update/lecturer', (req,res) => {
     const lecturer_id = req.body.lecturer_id;
     const lecturer_user_name = req.body.lecturer_user_name;
-    console.log(lecturer_id, lecturer_user_name)
     const sqlUpdate = "Update lecturers SET lecturer_user_name = ? where lecturer_id = ?;"; 
     db.query(sqlUpdate, [lecturer_user_name, lecturer_id], (err, result) => {
         if (err) throw err;
-        console.log(result);
     })
 })
 app.listen(3001, () => {
