@@ -2,6 +2,7 @@ import React, { useEffect, useState }  from "react";
 import Axios from "axios";
 import "../../Style/Admin/LecturerTable.css";
 import PaginationBar from "../PaginationBar";
+import InputRow from "./InputRow.js";
 import detail_icon from '../../Images/detail_icon.png';
 import change_icon from '../../Images/change_icon.png';
 import delete_icon from '../../Images/delete_icon.png';
@@ -105,7 +106,7 @@ const LecturerTable = () => {
                 setLecturerFormError({id: "", userName:"", fullName:"", title:"", email:"", sup: ""})
                 setReload(!reload)
             }).catch(e => {
-                console.log("catch");
+                console.log(e);
             });
         }
     };
@@ -170,67 +171,25 @@ const LecturerTable = () => {
                 <div className="form-title" onClick={handleOpenForm}>Lecturer Form</div>
                 {openForm ? (
                     <div className="form-content">
-                        <div className="form-content-row">
-                            <label>Lecturer ID :</label>
-                            <input
-                                type="text" 
-                                name="lecturer_id" 
-                                value={lecturerFormContent.id} 
-                                onChange={(e) => changeForm("id", e.target.value)}
-                                disabled={isAdd ? null : "disabled"}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.id}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Lecturer User Name :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_user_name" 
-                                value={lecturerFormContent.userName} 
-                                onChange={(e) => changeForm("userName", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.userName}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Lecturer Full Name :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_fullName" 
-                                value={lecturerFormContent.fullName} 
-                                onChange={(e) => changeForm("fullName", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.fullName}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Lecturer Title :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_title" 
-                                value={lecturerFormContent.title} 
-                                onChange={(e) => changeForm("title", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.title}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Lecturer Email :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_email" 
-                                value={lecturerFormContent.email} 
-                                onChange={(e) => changeForm("email", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.email}</div>
-                        </div>
-                        <div className="form-content-row">
-                            <label>Supervisor :</label>
-                            <input 
-                                type="text" 
-                                name="lecturer_supervisor" 
-                                value={lecturerFormContent.sup} 
-                                onChange={(e) => changeForm("sup", e.target.value)}>
-                            </input>
-                            <div className="form-content-row-error">{lecturerFormError.sup}</div>
-                        </div>
+                        {
+                            isAdd ?
+                            <>
+                                <InputRow label="Lecturer ID :" value={lecturerFormContent.id} field="id" error={lecturerFormError.id} changeContent={changeForm}/>
+                                <InputRow label="Lecturer User Name :" value={lecturerFormContent.userName} field="userName" error={lecturerFormError.userName} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Full Name :" value={lecturerFormContent.fullName} field="fullName" error={lecturerFormError.fullName} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Title :" value={lecturerFormContent.title} field="title" error={lecturerFormError.title} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Email :" value={lecturerFormContent.email} field="email" error={lecturerFormError.email} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Type :" type="select" listContent={[{key: "lecturer1", label: "Lecturer I"}, {key: "lecturer2", label: "Lecturer II"}]} defaultValue={lecturerFormContent.sup||lecturerFormContent.sup==='0' ? lecturerFormContent.sup : ""} field="sup" error={lecturerFormError.sup} changeContent={changeForm}/>
+                            </> :
+                            <>
+                                <InputRow label="Lecturer ID :" value={lecturerFormContent.id} isDisabled="disabled"/>
+                                <InputRow label="Lecturer User Name :" value={lecturerFormContent.userName} field="userName" error={lecturerFormError.userName} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Full Name :" value={lecturerFormContent.fullName} field="fullName" error={lecturerFormError.fullName} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Title :" value={lecturerFormContent.title} field="title" error={lecturerFormError.title} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Email :" value={lecturerFormContent.email} field="email" error={lecturerFormError.email} changeContent={changeForm}/>
+                                <InputRow label="Lecturer Type :" type="select" listContent={[{key: "lecturer1", label: "Lecturer I"}, {key: "lecturer2", label: "Lecturer II"}]} defaultValue={lecturerFormContent.sup||lecturerFormContent.sup==='0' ? lecturerFormContent.sup : ""} field="sup" error={lecturerFormError.sup} changeContent={changeForm}/>
+                            </>
+                        }
                         <div className="form-button-area">
                             <button className="form-add-button" onClick={submitForm}>{isAdd ? "Add" : "Update"}</button>
                             <button className="form-cancel-button" onClick={cancelForm}>Cancel</button>
@@ -301,7 +260,7 @@ const LecturerTable = () => {
                             <th>Full Name</th>
                             <th>Title</th>
                             <th>Email</th>
-                            <th>Supervisor</th>
+                            <th>Type</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -314,7 +273,7 @@ const LecturerTable = () => {
                                     <td>{lecturer.fullname}</td>
                                     <td>{lecturer.title}</td>
                                     <td>{lecturer.email}</td>
-                                    <td>{lecturer.supervisor}</td>
+                                    <td>{lecturer.supervisor==="lecturer1" ? "Lecturer I" : "Lecturer II"}</td>
                                     <td className="icon-column">
                                         <img className="icon delete_icon" src={delete_icon} alt="delete_icon" onClick={() => deleteRow(lecturer.lecturer_id)}/>
                                         <img className="icon" src={detail_icon} alt="detail_icon"/>

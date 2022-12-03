@@ -179,7 +179,7 @@ const ThesisTable = () => {
                     numberHardCopies: res.data[0].number_hard_copies,
                     printRequirements: res.data[0].print_requirements,
                     templateFiles: res.data[0].template_files,
-                    submissionDeadline: res.data[0].submission_deadline,
+                    submissionDeadline: res.data[0].submission_deadline ? new Date(res.data[0].submission_deadline).toLocaleDateString("fr-CA") : "",
                 })
             })
             .catch((e)=>{
@@ -220,21 +220,33 @@ const ThesisTable = () => {
                 <div className="form-title" onClick={handleOpenForm}>Thesis Form</div>
                 {openForm ? (
                     <div className="form-content">
-                        <InputRow label="Thesis ID :" value={thesisFormContent.id} field="id" error={thesisFormError.id} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
-                        <InputRow label="Thesis Topic :" value={thesisFormContent.topic} field="topic" error={thesisFormError.topic} changeContent={changeForm}/>
-                        <InputRow label="Thesis Field :" value={thesisFormContent.field} field="field" error={thesisFormError.field} changeContent={changeForm}/>
-                        <InputRow label="Thesis Supervisor 1 :" value={thesisFormContent.idSup1 ? thesisFormContent.idSup1 : ""} field="idSup1" error={thesisFormError.idSup1} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
-                        {isAdd ? null : <InputRow label="Thesis Supervisor 2 :" value={thesisFormContent.idSup2 ? thesisFormContent.idSup2 : ""} field="idSup2" isDisabled="disabled" changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Student :" value={thesisFormContent.student ? thesisFormContent.student.toString() : ""} field="student" isDisabled="disabled" changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Slot :" value={thesisFormContent.slot} field="slot" isDisabled="disabled" changeContent={changeForm}/>}
-                        <InputRow label="Thesis Slot Maximum :" value={thesisFormContent.slotMax} field="slotMax" error={thesisFormError.slotMax} isDisabled={isAdd ? null : "disabled"} changeContent={changeForm}/>
-                        {isAdd ? null : <InputRow label="Thesis Step :" value={thesisFormContent.step} field="step" isDisabled="disabled" changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Activate Registration :" value={thesisFormContent.activateRegistration} field="activateRegistration" error={thesisFormError.activateRegistration} isDisabled={null} changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Activate Defense :" value={thesisFormContent.activateDefense} field="activateDefense" error={thesisFormError.activateDefense} isDisabled={null} changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Number Of Hard Copies :" value={thesisFormContent.numberHardCopies} field="numberHardCopies" error={thesisFormError.numberHardCopies} isDisabled={null} changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Print Requirements :" value={thesisFormContent.printRequirements} field="printRequirements" error={thesisFormError.printRequirements} isDisabled={null} changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Template Files :" value={thesisFormContent.templateFiles} field="templateFiles" error={thesisFormError.templateFiles} isDisabled={null} changeContent={changeForm}/>}
-                        {isAdd ? null : <InputRow label="Thesis Submission Deadline :" value={thesisFormContent.submissionDeadline} field="submissionDeadline" error={thesisFormError.submissionDeadline} isDisabled={null} changeContent={changeForm}/>}
+                        {
+                            isAdd ?
+                            <>
+                                <InputRow label="Thesis ID :" value={thesisFormContent.id} field="id" error={thesisFormError.id} changeContent={changeForm}/>
+                                <InputRow label="Thesis Topic :" value={thesisFormContent.topic} field="topic" error={thesisFormError.topic} changeContent={changeForm}/>
+                                <InputRow label="Thesis Field :" value={thesisFormContent.field} field="field" error={thesisFormError.field} changeContent={changeForm}/>
+                                <InputRow label="Thesis Supervisor 1 :" value={thesisFormContent.idSup1 ? thesisFormContent.idSup1 : ""} field="idSup1" error={thesisFormError.idSup1} changeContent={changeForm}/>
+                                <InputRow label="Thesis Slot Maximum :" value={thesisFormContent.slotMax} field="slotMax" error={thesisFormError.slotMax} changeContent={changeForm}/>
+                            </> :
+                            <>
+                                <InputRow label="Thesis ID :" value={thesisFormContent.id} isDisabled="disabled"/>
+                                <InputRow label="Thesis Topic :" value={thesisFormContent.topic} field="topic" error={thesisFormError.topic} changeContent={changeForm}/>
+                                <InputRow label="Thesis Field :" value={thesisFormContent.field} field="field" error={thesisFormError.field} changeContent={changeForm}/>
+                                <InputRow label="Thesis Supervisor 1 :" value={thesisFormContent.idSup1 ? thesisFormContent.idSup1 : ""} isDisabled="disabled"/>
+                                <InputRow label="Thesis Supervisor 2 :" value={thesisFormContent.idSup2 ? thesisFormContent.idSup2 : ""} isDisabled="disabled"/>
+                                <InputRow label="Thesis Student :" value={thesisFormContent.student ? thesisFormContent.student.toString() : ""} isDisabled="disabled"/>
+                                <InputRow label="Thesis Slot :" value={thesisFormContent.slot} isDisabled="disabled"/>
+                                <InputRow label="Thesis Slot Maximum :" value={thesisFormContent.slotMax} isDisabled="disabled"/>
+                                <InputRow label="Thesis Step :" value={thesisFormContent.step} isDisabled="disabled"/>
+                                <InputRow label="Thesis Activate Registration :" type="select" listContent={[{key: "0", label: "Not Activated"}, {key: "1", label: "Activated"}]} defaultValue={thesisFormContent.activateRegistration} field="activateRegistration" error={thesisFormError.activateRegistration} changeContent={changeForm}/>
+                                <InputRow label="Thesis Activate Defense :" type="select" listContent={[{key: "0", label: "Not Activated"}, {key: "1", label: "Activated"}]} defaultValue={thesisFormContent.activateDefense} field="activateDefense" error={thesisFormError.activateDefense} changeContent={changeForm}/>
+                                <InputRow label="Thesis Number Of Hard Copies :" value={thesisFormContent.numberHardCopies} field="numberHardCopies" error={thesisFormError.numberHardCopies} changeContent={changeForm}/>
+                                <InputRow label="Thesis Print Requirements :" value={thesisFormContent.printRequirements} field="printRequirements" error={thesisFormError.printRequirements} changeContent={changeForm}/>
+                                <InputRow label="Thesis Template Files :" value={thesisFormContent.templateFiles} field="templateFiles" error={thesisFormError.templateFiles} changeContent={changeForm}/>
+                                <InputRow label="Thesis Submission Deadline :" value={thesisFormContent.submissionDeadline} field="submissionDeadline" type="date" error={thesisFormError.submissionDeadline} changeContent={changeForm}/>
+                            </>
+                        }
                         <div className="form-button-area">
                             <button className="form-add-button" onClick={submitForm}>{isAdd ? "Add" : "Update"}</button>
                             <button className="form-cancel-button" onClick={cancelForm}>Cancel</button>
