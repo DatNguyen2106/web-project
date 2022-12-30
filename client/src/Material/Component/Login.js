@@ -31,8 +31,12 @@ const Login = () => {
                         .then(res => {
                             if(res.data.role.includes("admin")){
                                 window.location.replace("/admin");
-                            }else if(res.data.role.includes("lecturer1") || res.data.role.includes("lecturer2")){
-                                window.location.replace("/lecturer");
+                            }else if(res.data.role.includes("lecturer1.1")){
+                                window.location.replace("/lecturer11");
+                            }else if(res.data.role.includes("lecturer1.2")){
+                                window.location.replace("/lecturer12");
+                            }else if(res.data.role.includes("lecturer2")){
+                                window.location.replace("/lecturer2");
                             }else if(res.data.role.includes("student")){
                                 window.location.replace("/student");
                             }else{

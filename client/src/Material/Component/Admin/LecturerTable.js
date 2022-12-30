@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from "react";
 import Axios from "axios";
 import "../../Style/Admin/LecturerTable.css";
 import PaginationBar from "../PaginationBar";
-import InputRow from "./InputRow.js";
+import InputRow from "../InputRow.js";
 import detail_icon from '../../Images/detail_icon.png';
 import change_icon from '../../Images/change_icon.png';
 import delete_icon from '../../Images/delete_icon.png';

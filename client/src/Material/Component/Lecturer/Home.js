@@ -2,14 +2,14 @@ import React, {useEffect, useState} from "react";
 import Axios from "axios";
 import "../../Style/Admin/Home.css";
 import linkImage from '../../Images/logo192.png';
-import LecturerTable from "./LecturerTable";
-import StudentTable from "./StudentTable";
-import ThesisTable from "./ThesisTable";
+import AddingTheses from "./AddingTheses";
+import ManagingTheses from "./ManagingTheses";
 const Home = (props) => {
     const [renderComponent, setRenderComponent] = useState("home");
     const [notifications, setNotifications] = useState([]);
 
     useEffect(()=>{
+        console.log(props.lecturerType)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios.get("http://localhost:5000/getNotifications", config).then((response) => {
             setNotifications(response.data);
@@ -34,15 +34,11 @@ const Home = (props) => {
         switch(renderComponent) {
             case "student-list":
                 return (<div className="pop-up"  onClick={(e) => closePopUp(e)}>
-                            <div className="pop-up-content"><StudentTable/></div>
+                            <div className="pop-up-content"><ManagingTheses lecturerType={props.lecturerType}/></div>
                         </div>)
             case "lecturer-list":
                 return (<div className="pop-up"  onClick={(e) => closePopUp(e)}>
-                            <div className="pop-up-content"><LecturerTable/></div>
-                        </div>)
-            case "thesis-list":
-                return (<div className="pop-up"  onClick={(e) => closePopUp(e)}>
-                            <div className="pop-up-content"><ThesisTable/></div>
+                            <div className="pop-up-content"><AddingTheses lecturerType={props.lecturerType}/></div>
                         </div>)
         }
     }
@@ -71,17 +67,17 @@ const Home = (props) => {
                     null}
                     <div className="nav-row">
                         <div className="nav-block" onClick={() => changeRenderComponent("student-list")}>
-                                <div className="nav-block-title">Student</div>
+                                <div className="nav-block-title">Managing Theses</div>
                                 <div className="nav-block-content"><img className="logo" src={linkImage} alt="linkImage"/></div>
                         </div>
-                        <div className="nav-block" onClick={() => changeRenderComponent("lecturer-list")}>
-                                <div className="nav-block-title">Lecturer</div>
-                                <div className="nav-block-content"><img className="logo" src={linkImage} alt="linkImage"/></div>
-                        </div>
-                        <div className="nav-block" onClick={() => changeRenderComponent("thesis-list")}>
-                                <div className="nav-block-title">Thesis</div>
-                                <div className="nav-block-content"><img className="logo" src={linkImage} alt="linkImage"/></div>
-                        </div>
+                        {
+                            props.lecturerType==="1.1" ? 
+                                <div className="nav-block" onClick={() => changeRenderComponent("lecturer-list")}>
+                                    <div className="nav-block-title">Adding Theses</div>
+                                    <div className="nav-block-content"><img className="logo" src={linkImage} alt="linkImage"/></div>
+                                </div> : 
+                                null
+                        }
                     </div>
                     <div className="nav-row">
                         <div className="nav-link">

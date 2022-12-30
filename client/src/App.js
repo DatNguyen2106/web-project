@@ -70,8 +70,10 @@ const App = () => {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/admin/*" element={<Admin socket={socket}/>} />
-                    <Route path="/lecturer/*" element={<Lecturer />} />
-                    <Route path="/student/*" element={<Student />} />
+                    <Route path="/lecturer11/*" element={<Lecturer lecturerType="1.1" socket={socket}/>} />
+                    <Route path="/lecturer12/*" element={<Lecturer lecturerType="1.2" socket={socket}/>} />
+                    <Route path="/lecturer2/*" element={<Lecturer lecturerType="2" socket={socket}/>} />
+                    <Route path="/student/*" element={<Student socket={socket}/>} />
                     <Route path="/denied" element={<Error message="Access denied."/>} />
                     <Route path="/unknown" element={<Error message="The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."/>} />
                     <Route path="*" element={<Navigate replace to="unknown" />} />

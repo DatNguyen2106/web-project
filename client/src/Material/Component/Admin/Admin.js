@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import Axios from "axios";
 import {Route, Routes, Navigate} from "react-router-dom";
 import Home from "./Home";
-import LecturerTable from "./LecturerTable";
 const Admin = (props) => {
     useEffect(() => {
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }};
@@ -22,7 +21,6 @@ const Admin = (props) => {
         <>
             <Routes>
                 <Route path="/" element={<Home socket={props.socket}/>} />
-                <Route path="/lecturer" element={<LecturerTable />} />
                 <Route path="*" element={<Navigate replace to="" />} />
             </Routes>
         </>
