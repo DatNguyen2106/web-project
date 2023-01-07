@@ -22,14 +22,12 @@ const ManagingTheses = (props) => {
     const [openForm, setOpenForm] = React.useState(false);
 
     useEffect(() => {
-        console.log("a")
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let body = {
             page: activePage.toString()
         }
         let url = props.lecturerType.includes("1") ? "http://localhost:5000/lecturer1/get/theses" : "http://localhost:5000/lecturer2/get/theses"
         Axios.post(url, body, config).then((response) => {
-            console.log(response.data)
             setThesisList(response.data);
             setTotalPage(response.data.totalPage);
             if (activePage > response.data.totalPage) setActivePage(response.data.totalPage);
@@ -140,11 +138,10 @@ const ManagingTheses = (props) => {
     };
 
     const detailRow = (id) => {
-        console.log("Detail thesis "+id)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let url = props.lecturerType.includes("1") ? "http://localhost:5000/lecturer1/get/thesis/" : "http://localhost:5000/lecturer2/get/thesis/"
         Axios.get(url+id, config).then((response) => {
-            console.log(response.data.list)
+            console.log(response.data)
             let curList = []
             for (const i of response.data.list){
                 if(i.student_id){
@@ -193,28 +190,28 @@ const ManagingTheses = (props) => {
                     })
                 }
             }
-            console.log({
-                myID: response.data.lecturer_id,
-                thesisID: response.data.list[0].thesis_id,
-                topic: response.data.list[0].thesis_topic, 
-                field: response.data.list[0].thesis_field, 
-                numOfSlot: response.data.list[0].slot, 
-                maxOfSlot: response.data.list[0].slot_maximum,
-                step: response.data.list[0].step, 
-                sup1: {
-                    id: response.data.list[0].lecturer1_id,
-                    title: response.data.list[0].lecturer1_title,
-                    mail: response.data.list[0].lecturer1_email,
-                },
-                sup2: {
-                    id: response.data.list[0].lecturer2_id,
-                    title: response.data.list[0].lecturer2_title,
-                    mail: response.data.list[0].lecturer2_email,
-                    isConfirmed: response.data.list[0].confirm_sup2===1 ? true : false,
-                },
-                studentList: curList, //id, fullName, intake, mail, isConfirmed
+            // console.log({
+            //     myID: response.data.lecturer_id,
+            //     thesisID: response.data.list[0].thesis_id,
+            //     topic: response.data.list[0].thesis_topic, 
+            //     field: response.data.list[0].thesis_field, 
+            //     numOfSlot: response.data.list[0].slot, 
+            //     maxOfSlot: response.data.list[0].slot_maximum,
+            //     step: response.data.list[0].step, 
+            //     sup1: {
+            //         id: response.data.list[0].lecturer1_id,
+            //         title: response.data.list[0].lecturer1_title,
+            //         mail: response.data.list[0].lecturer1_email,
+            //     },
+            //     sup2: {
+            //         id: response.data.list[0].lecturer2_id,
+            //         title: response.data.list[0].lecturer2_title,
+            //         mail: response.data.list[0].lecturer2_email,
+            //         isConfirmed: response.data.list[0].confirm_sup2===1 ? true : false,
+            //     },
+            //     studentList: curList, //id, fullName, intake, mail, isConfirmed
                 
-            })
+            // })
             setLecturerThesis({
                 myID: response.data.lecturer_id,
                 thesisID: response.data.list[0].thesis_id,
@@ -223,6 +220,10 @@ const ManagingTheses = (props) => {
                 numOfSlot: response.data.list[0].slot, 
                 maxOfSlot: response.data.list[0].slot_maximum,
                 step: response.data.list[0].step, 
+                submissionDeadline: response.data.list[0].submission_deadline ? new Date(response.data.list[0].submission_deadline).toLocaleDateString("fr-CA") : "",
+                templateFile: response.data.list[0].template_files,
+                numberOfHardCopies: response.data.list[0].number_hard_copies,
+                printRequirements: response.data.list[0].print_requirements,
                 sup1: {
                     id: response.data.list[0].lecturer1_id,
                     title: response.data.list[0].lecturer1_title,
@@ -274,6 +275,7 @@ const ManagingTheses = (props) => {
                         <h5>Waiting for the student to fill in the form</h5>
                     </div>)
                 }else if(student.registrationBachelorThesis.step === 1){
+                    console.log(student)
                     items.push(<div key={student.id}>
                         <h3>Student {student.fullName+" - "+student.id}</h3>
                         <h5>The form is filled in. You can sign in or return the form to the student</h5>
@@ -284,7 +286,7 @@ const ManagingTheses = (props) => {
                         <InputRow label="Student Date Of Birth :" value={student.registrationBachelorThesis.dateOfBirth} isDisabled="disabled"/>
                         <InputRow label="Student Place Of Birth :" value={student.registrationBachelorThesis.placeOfBirth} isDisabled="disabled"/>
                         <InputRow label="Thesis Title :" value={student.registrationBachelorThesis.thesisTitle} isDisabled="disabled"/>
-                        {/* <InputRow label="Individual Or Group Study :" type="select" listContent={[{key: "0", label: "Individual"}, {key: "1", label: "Group"}]} defaultValue={student.registrationBachelorThesis.thesisType||student.registrationBachelorThesis.thesisType==='0' ? student.registrationBachelorThesis.thesisType : ""} field1="registrationBachelorThesis" field2="thesisType" error={studentThesisError.registrationBachelorThesis.thesisType} changeContent={changeForm}/> */}
+                        <InputRow label="Individual Or Group Study :" type="select" listContent={[{key: "0", label: "Individual"}, {key: "1", label: "Group"}]} defaultValue={student.registrationBachelorThesis.thesisType||student.registrationBachelorThesis.thesisType==='0' ? student.registrationBachelorThesis.thesisType : ""} isDisabled="disabled"/>
                         <InputRow label="Further Participants :" value={student.registrationBachelorThesis.furtherParticipants} isDisabled="disabled"/>
                         <InputRow label="Assessor :" value={student.registrationBachelorThesis.titleSup1} isDisabled="disabled"/>
                         <InputRow label="Date From Assessor :" value={student.registrationBachelorThesis.dateSup1} isDisabled="disabled"/>
@@ -308,12 +310,7 @@ const ManagingTheses = (props) => {
                 }else if(student.registrationBachelorThesis.step === 3){
                     items.push(<div key={student.id}>
                         <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>Waiting for the Admin to confirm the form</h5>
-                    </div>)
-                }else if(student.registrationBachelorThesis.step === 4){
-                    items.push(<div key={student.id}>
-                        <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>The form has been confirmed</h5>
+                        <h5>The form is done.</h5>
                     </div>)
                 }
             }else {
@@ -343,7 +340,7 @@ const ManagingTheses = (props) => {
                         <InputRow label="Student Date Of Birth :" value={student.registrationBachelorThesis.dateOfBirth} isDisabled="disabled"/>
                         <InputRow label="Student Place Of Birth :" value={student.registrationBachelorThesis.placeOfBirth} isDisabled="disabled"/>
                         <InputRow label="Thesis Title :" value={student.registrationBachelorThesis.thesisTitle} isDisabled="disabled"/>
-                        {/* <InputRow label="Individual Or Group Study :" type="select" listContent={[{key: "0", label: "Individual"}, {key: "1", label: "Group"}]} defaultValue={student.registrationBachelorThesis.thesisType||student.registrationBachelorThesis.thesisType==='0' ? student.registrationBachelorThesis.thesisType : ""} field1="registrationBachelorThesis" field2="thesisType" error={studentThesisError.registrationBachelorThesis.thesisType} changeContent={changeForm}/> */}
+                        <InputRow label="Individual Or Group Study :" type="select" listContent={[{key: "0", label: "Individual"}, {key: "1", label: "Group"}]} defaultValue={student.registrationBachelorThesis.thesisType||student.registrationBachelorThesis.thesisType==='0' ? student.registrationBachelorThesis.thesisType : ""} isDisabled="disabled"/>
                         <InputRow label="Further Participants :" value={student.registrationBachelorThesis.furtherParticipants} isDisabled="disabled"/>
                         <InputRow label="Assessor :" value={student.registrationBachelorThesis.titleSup1} isDisabled="disabled"/>
                         <InputRow label="Date From Assessor :" value={student.registrationBachelorThesis.dateSup1} isDisabled="disabled"/>
@@ -361,12 +358,7 @@ const ManagingTheses = (props) => {
                 }else if(student.registrationBachelorThesis.step === 3){
                     items.push(<div key={student.id}>
                         <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>Waiting for the Admin to confirm the form</h5>
-                    </div>)
-                }else if(student.registrationBachelorThesis.step === 4){
-                    items.push(<div key={student.id}>
-                        <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>The form has been confirmed</h5>
+                        <h5>The form is done.</h5>
                     </div>)
                 }
             }
@@ -428,12 +420,16 @@ const ManagingTheses = (props) => {
                 }else if(student.registrationOralDefense.step === 1){
                     items.push(<div key={student.id}>
                         <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>Waiting for the Admin to confirm the form</h5>
-                    </div>)
-                }else if(student.registrationOralDefense.step === 2){
-                    items.push(<div key={student.id}>
-                        <h3>Student {student.fullName+" - "+student.id}</h3>
-                        <h5>The form has been confirmed</h5>
+                        <h5>The form is done.</h5>
+                        {student.registrationOralDefense.proposedTime ? 
+                            <>
+                                <InputRow label="Weekday :" type="select" listContent={[{key: "0", label: "Monday"}, {key: "1", label: "Tuesday"}, {key: "2", label: "Wednesday"}, {key: "3", label: "Thursday"}, {key: "4", label: "Friday"}, {key: "5", label: "Saturday"}, {key: "6", label: "Sunday"}]} defaultValue={student.registrationOralDefense.weekday||student.registrationOralDefense.weekday==='0' ? student.registrationOralDefense.weekday : ""} isDisabled="disabled"/>
+                                <InputRow label="Date :" value={student.registrationOralDefense.proposedDate} type="date" isDisabled="disabled"/>
+                                <InputRow label="Time :" value={student.registrationOralDefense.proposedTime} isDisabled="disabled"/>
+                                <InputRow label="Room :" value={student.registrationOralDefense.room} isDisabled="disabled"/>
+                            </>
+                            : null
+                        }
                     </div>)
                 }
         })
@@ -520,7 +516,6 @@ const ManagingTheses = (props) => {
     }
 
     const confirmSup2Request = (thesisId, isAccepted) => {
-        console.log(thesisId, isAccepted)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let body = {
             thesisId: thesisId,
@@ -564,6 +559,15 @@ const ManagingTheses = (props) => {
                         <InputRow label="Step :" value={""+lecturerThesis.step} isDisabled="disabled"/>
                         <InputRow label="Supervisor 1 :" value={lecturerThesis.sup1.title + " - " + lecturerThesis.sup1.id + " - " + lecturerThesis.sup1.mail} isDisabled="disabled"/>
                         <InputRow label="Supervisor 2 :" value={lecturerThesis.sup2.id ? lecturerThesis.sup2.title + " - " + lecturerThesis.sup2.id + " - " + lecturerThesis.sup2.mail + (lecturerThesis.sup2.isConfirmed ? " - confirmed" : " - not confirmed") : ""} isDisabled="disabled"/>
+                        {lecturerThesis.step >= 4 ?
+                            <>
+                                <InputRow label="Submission Deadline :" value={lecturerThesis.submissionDeadline} isDisabled="disabled"/>
+                                <InputRow label="Number Of Hard Copies :" value={lecturerThesis.numberOfHardCopies} isDisabled="disabled"/>
+                                <InputRow label="Print Requirements :" value={lecturerThesis.printRequirements} isDisabled="disabled"/>
+                                <InputRow label="Template File :" value={""+lecturerThesis.templateFile} isDisabled="disabled"/>
+                            </>
+                            : null
+                        }
                         <table className="table-content">
                             <thead>
                                 <tr>

@@ -5,6 +5,7 @@ import linkImage from '../../Images/logo192.png';
 import LecturerTable from "./LecturerTable";
 import StudentTable from "./StudentTable";
 import ThesisTable from "./ThesisTable";
+import SignatureUploading from "../SignatureUploading";
 const Home = (props) => {
     const [renderComponent, setRenderComponent] = useState("home");
     const [notifications, setNotifications] = useState([]);
@@ -43,6 +44,10 @@ const Home = (props) => {
             case "thesis-list":
                 return (<div className="pop-up"  onClick={(e) => closePopUp(e)}>
                             <div className="pop-up-content"><ThesisTable/></div>
+                        </div>)
+            case "account":
+                return (<div className="pop-up"  onClick={(e) => closePopUp(e)}>
+                            <div className="pop-up-content"><SignatureUploading/></div>
                         </div>)
         }
     }
@@ -86,7 +91,7 @@ const Home = (props) => {
                     <div className="nav-row">
                         <div className="nav-link">
                             <div className="nav-block">
-                                <div className="nav-block-title">Account Settings</div>
+                                <div className="nav-block-title" onClick={() => changeRenderComponent("account")}>Account Settings</div>
                             </div>
                         </div>
                         <div className="nav-link">

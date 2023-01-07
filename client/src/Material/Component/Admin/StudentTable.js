@@ -270,7 +270,6 @@ const StudentTable = () => {
                 }
             }
             if(isAdd) {body.id = parseInt(studentFormContent.id)}
-            console.log(body)
             let url = isAdd ? `http://localhost:5000/admin/add/student` : `http://localhost:5000/admin/update/student/${studentFormContent.id}${extraURL}`
             let method = isAdd ? "post" : "put"
             Axios[method](url, body, config).then((response)=>{

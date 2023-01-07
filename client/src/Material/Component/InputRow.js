@@ -1,7 +1,13 @@
 import React from "react";
 const InputRow = (props) => {
     const render = () => {
-        if (props.type === "select"){
+        if(props.isDisabled==="disabled"){
+            return(
+                <div>
+                    {props.type === "select" ? props.listContent.find(x => x.key===props.defaultValue).label : (props.value ? props.value : "")}
+                </div>
+            )
+        }else if (props.type === "select"){
             return(
                 <select value={props.defaultValue} onChange={props.field ? (e) => props.changeContent(props.field, e.target.value) : (e) => props.changeContent(props.field1, props.field2, e.target.value)}>
                     <option value="" style={{display: "none"}}></option>

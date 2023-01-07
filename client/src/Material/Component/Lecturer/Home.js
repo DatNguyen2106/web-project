@@ -9,7 +9,6 @@ const Home = (props) => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(()=>{
-        console.log(props.lecturerType)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios.get("http://localhost:5000/getNotifications", config).then((response) => {
             setNotifications(response.data);

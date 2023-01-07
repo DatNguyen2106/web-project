@@ -17,17 +17,15 @@ const ThesisTable = (props) => {
     const [thesisList, setThesisList] = useState([]);
     const [activePage, setActivePage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    const [openForm, setOpenForm] = React.useState(false);
+    const [openForm, setOpenForm] = React.useState(true);
 
     useEffect(() => {
-        console.log("a")
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let body = {
             page: activePage.toString()
         }
         let url = "http://localhost:5000/lecturer1/get/theses"
         Axios.post(url, body, config).then((response) => {
-            console.log(response.data)
             setThesisList(response.data);
             setTotalPage(response.data.totalPage);
             if (activePage > response.data.totalPage) setActivePage(response.data.totalPage);
@@ -78,8 +76,6 @@ const ThesisTable = (props) => {
     }, [thesisFormContent]);
 
     const submitForm = () => {
-        console.log(thesisFormContent)
-        console.log(thesisFormError)
         if (thesisFormError.id === "" && thesisFormError.topic === "" && thesisFormError.field === "" && thesisFormError.slotMax === ""){
             let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
             let body = {
@@ -93,7 +89,8 @@ const ThesisTable = (props) => {
                 setThesisFormError({...defaultForm})
                 setReload(!reload)
             }).catch(e => {
-                console.log(e);
+                console.log(e)
+                // window.location.replace("/denied?message=" + "Error Occured");
             });
         }
     };

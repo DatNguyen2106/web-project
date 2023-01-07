@@ -40,7 +40,7 @@ const Login = () => {
                             }else if(res.data.role.includes("student")){
                                 window.location.replace("/student");
                             }else{
-                                window.location.replace("/denied");
+                                window.location.replace("/denied?message=" + "Access Denied");
                             }
                         })
                         .catch(e => {

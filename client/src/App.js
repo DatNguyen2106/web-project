@@ -74,7 +74,7 @@ const App = () => {
                     <Route path="/lecturer12/*" element={<Lecturer lecturerType="1.2" socket={socket}/>} />
                     <Route path="/lecturer2/*" element={<Lecturer lecturerType="2" socket={socket}/>} />
                     <Route path="/student/*" element={<Student socket={socket}/>} />
-                    <Route path="/denied" element={<Error message="Access denied."/>} />
+                    <Route path="/denied" element={<Error message={(new URLSearchParams(window.location.search)).get('message')}/>} />
                     <Route path="/unknown" element={<Error message="The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."/>} />
                     <Route path="*" element={<Navigate replace to="unknown" />} />
                 </Routes>

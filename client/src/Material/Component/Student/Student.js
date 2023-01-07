@@ -9,7 +9,7 @@ const Student = (props) => {
             .get("http://localhost:4000/roles", config)
             .then(res => {
                 if(!res.data.role.includes("student")){
-                    window.location.replace("/denied");
+                    window.location.replace("/denied?message=" + "Access Denied");
                 }
             })
             .catch(e => {

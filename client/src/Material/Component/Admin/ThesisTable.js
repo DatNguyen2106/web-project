@@ -127,7 +127,7 @@ const ThesisTable = () => {
                 numberOfHardCopies: thesisFormContent.numberHardCopies,
                 printRequirements: thesisFormContent.printRequirements,
                 templateFiles: thesisFormContent.templateFiles,
-                submissionDeadline: thesisFormContent.submissionDeadline,
+                submissionDeadline: thesisFormContent.submissionDeadline ? thesisFormContent.submissionDeadline : null,
             }
             if(isAdd) {body.thesisId = parseInt(thesisFormContent.id)}
             let url = isAdd ? `http://localhost:5000/admin/add/thesis` : `http://localhost:5000/admin/update/thesis/${thesisFormContent.id}`
@@ -138,7 +138,7 @@ const ThesisTable = () => {
                 setThesisFormError({...defaultForm})
                 setReload(!reload)
             }).catch(e => {
-                console.log("catch");
+                console.log(e);
             });
         }
     };
@@ -183,7 +183,7 @@ const ThesisTable = () => {
                 })
             })
             .catch((e)=>{
-                console.log("catch")
+                console.log(e)
             })
     }
 

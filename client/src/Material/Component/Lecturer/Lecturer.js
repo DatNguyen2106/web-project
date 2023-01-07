@@ -8,8 +8,8 @@ const Lecturer = (props) => {
         Axios
             .get("http://localhost:4000/roles", config)
             .then(res => {
-                if(!res.data.role.includes("lecturer"+props.lecturerType)){
-                    window.location.replace("/denied");
+                if(!window.location.href.includes("/denied?message=Access Denied") && ((props.lecturerType==="1.1" && !res.data.role.includes("lecturer1.1")) || (props.lecturerType==="1.2" && !res.data.role.includes("lecturer1.2")))){
+                    window.location.replace("/denied?message=" + "Access Denied");
                 }
             })
             .catch(e => {

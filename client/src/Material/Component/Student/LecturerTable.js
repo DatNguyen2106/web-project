@@ -16,7 +16,6 @@ const LecturerTable = () => {
     const [openForm, setOpenForm] = React.useState(false);
 
     useEffect(() => {
-        console.log(lecturerListSearch)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         let body = {
             lecturerId: lecturerListSearch.id,
@@ -34,10 +33,8 @@ const LecturerTable = () => {
     }, [reload, activePage]);
 
     useEffect(() => {
-        console.log(lecturerListSearch)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios.get("http://localhost:5000/student/get/thesis", config).then((response) => {
-          console.log(response.data)
           setStudentThesis(response.data)
         }).catch(e => {
             console.log(e);
@@ -56,7 +53,6 @@ const LecturerTable = () => {
     };
 
     const detailRow = (id) => {
-        console.log(id)
         let config = {headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }}
         Axios
             .get(`http://localhost:5000/student/get/lecturer/${id}`, config)
@@ -81,7 +77,6 @@ const LecturerTable = () => {
                     maxOfTheses: res.data[0].maximum_of_theses,
                     thesisList: curList,
                 })
-                console.log(lecturerDetail)
                 setOpenForm(true);
             })
             .catch((e)=>{
@@ -95,7 +90,7 @@ const LecturerTable = () => {
             "thesisId" : id
         }
         Axios.post("http://localhost:5000/student/add/confirmSup1", body, config).then((response) => {
-          console.log(response.data)
+          setOpenForm(!openForm);
           setReload(!reload);
         }).catch((e)=>{
             console.log(e)
@@ -108,7 +103,6 @@ const LecturerTable = () => {
             "lecturer2_id" : id
         }
         Axios.put("http://localhost:5000/student/update/confirmSup2", body, config).then((response) => {
-          console.log(response.data)
           setReload(!reload);
         });
     }
@@ -132,8 +126,10 @@ const LecturerTable = () => {
     };
 
     const renderActionButton = (lecturer) => {
+        console.log(studentThesis)
+        console.log(lecturer)
         if(lecturer.supervisor.includes("lecturer1")){
-            if(studentThesis?.list?.length > 0 && !studentThesis?.list[0]?.lecturer2_id ){
+            if(studentThesis?.list?.length > 0 && !studentThesis?.list[0]?.lecturer2_id && studentThesis?.list[0]?.student_list.find(x => x.student_id === studentThesis.student_id).confirmSup1 && studentThesis?.list[0]?.lecturer1_id!==lecturer.lecturer_id && studentThesis?.list[0]?.slot===studentThesis?.list[0]?.slot_maximum){
                 return (
                     <td className="icon-column">
                         <img className="icon" src={add_icon} onClick={() => addSup2(lecturer.lecturer_id)} alt="detail_icon"/> 
@@ -147,7 +143,7 @@ const LecturerTable = () => {
                     </td>
                 )
             }
-        }else if(lecturer.supervisor.includes("lecturer2") && studentThesis?.list?.length > 0 && !studentThesis?.list[0]?.lecturer2_id ){
+        }else if(lecturer.supervisor.includes("lecturer2") && studentThesis?.list?.length > 0 && !studentThesis?.list[0]?.lecturer2_id && studentThesis?.list[0]?.student_list.find(x => x.student_id === studentThesis.student_id).confirmSup1 && studentThesis?.list[0]?.slot===studentThesis?.list[0]?.slot_maximum){
             return (
                 <td className="icon-column">
                     <img className="icon" src={add_icon} onClick={() => addSup2(lecturer.lecturer_id)} alt="detail_icon"/> 
@@ -168,7 +164,7 @@ const LecturerTable = () => {
                         <InputRow label="Lecturer Full Name :" value={lecturerDetail.fullName} isDisabled="disabled"/>
                         <InputRow label="Lecturer Title :" value={lecturerDetail.title} isDisabled="disabled"/>
                         <InputRow label="Lecturer Email :" value={lecturerDetail.email} isDisabled="disabled"/>
-                        <InputRow label="Lecturer Sup :" value={lecturerDetail.sup} isDisabled="disabled"/>
+                        <InputRow label="Lecturer Sup :" value={lecturerDetail.sup.includes("1.1") || lecturerDetail.sup.includes("1.2") ? "Supervisor 1" : "Supervisor 2"} isDisabled="disabled"/>
                         <InputRow label="Lecturer Number Of Theses :" value={lecturerDetail.numOfTheses} isDisabled="disabled"/>
                         <InputRow label="Lecturer Maximum Of Theses :" value={lecturerDetail.maxOfTheses} isDisabled="disabled"/>
                         <table className="table-content">

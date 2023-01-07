@@ -75,21 +75,23 @@ const DetailThesis = () => {
             console.log(response.data)
             let me = {}
             let curList = []
-            for (const i of response.data.list[0]?.student_list){
-                curList.push({
-                    id: i.student_id,
-                    fullName: i.fullName,
-                    intake: i.intake,
-                    mail: i.email,
-                    isConfirmed: i.confirmSup1===1 ? true : false,
-                })
-                if (i.student_id === response.data.student_id){
-                    me = {
-                        id: i.student_id, 
-                        fullName: i.fullName, 
-                        intake: i.intake, 
-                        mail: i.email, 
+            if(response.data.list.length > 0){
+                for (const i of response.data.list[0].student_list){
+                    curList.push({
+                        id: i.student_id,
+                        fullName: i.fullName,
+                        intake: i.intake,
+                        mail: i.email,
                         isConfirmed: i.confirmSup1===1 ? true : false,
+                    })
+                    if (i.student_id === response.data.student_id){
+                        me = {
+                            id: i.student_id, 
+                            fullName: i.fullName, 
+                            intake: i.intake, 
+                            mail: i.email, 
+                            isConfirmed: i.confirmSup1===1 ? true : false,
+                        }
                     }
                 }
             }
@@ -100,6 +102,10 @@ const DetailThesis = () => {
                 numOfSlot: response.data.list[0]?.slot, 
                 maxOfSlot: response.data.list[0]?.slot_maximum,
                 step: response.data.list[0]?.step, 
+                submissionDeadline: response.data.list[0].submission_deadline ? new Date(response.data.list[0].submission_deadline).toLocaleDateString("fr-CA") : "",
+                templateFile: response.data.list[0].template_files,
+                numberOfHardCopies: response.data.list[0].number_hard_copies,
+                printRequirements: response.data.list[0].print_requirements,
                 sup1: {
                     id: response.data.list[0]?.lecturer1_id,
                     title: response.data.list[0]?.title,
@@ -155,7 +161,6 @@ const DetailThesis = () => {
     }, [reload]);
 
     const changeForm = (field1, field2, value) => {
-        console.log(studentThesis)
         setStudentThesis({
             ...studentThesis,
             [field1]:{
@@ -189,7 +194,6 @@ const DetailThesis = () => {
                 chairmanOfExamination: studentThesis.registrationBachelorThesis.chairmanOfExamination,
                 dateOfIssue: studentThesis.registrationBachelorThesis.dateOfIssue,
             }
-            console.log(body)
         }else if(extraURL === "registrationOralDefense"){
             body = {
                 studentId : studentThesis.myInfo.id,
@@ -218,14 +222,15 @@ const DetailThesis = () => {
     };
 
     const renderRegistrationBachelorThesis = () => {
+        console.log(studentThesis)
         if (studentThesis.registrationBachelorThesis.step === 0){
             return (
                 <>
                     <br/><hr/>
                     <h3>Registration Of Bachelor Thesis</h3>
                     <h5>Please fill in the form and send to Supervisor 1.</h5>
-                    <InputRow label="Student ID :" value={studentThesis.id} isDisabled="disabled"/>
-                    <InputRow label="Student Matriculation Number :" value={studentThesis.registrationBachelorThesis.matriculationNumber} isDisabled="disabled" />
+                    <InputRow label="Student ID :" value={studentThesis.myInfo.id} isDisabled="disabled"/>
+                    <InputRow label="Student Matriculation Number :" value={studentThesis.registrationBachelorThesis.matriculationNumber} field1="registrationBachelorThesis" field2="matriculationNumber" error={studentThesisError.registrationBachelorThesis.matriculationNumber} changeContent={changeForm}/>
                     <InputRow label="Student Surname :" value={studentThesis.registrationBachelorThesis.surname} field1="registrationBachelorThesis" field2="surname" error={studentThesisError.registrationBachelorThesis.surname} changeContent={changeForm}/>
                     <InputRow label="Student Forename :" value={studentThesis.registrationBachelorThesis.forename} field1="registrationBachelorThesis" field2="forename" error={studentThesisError.registrationBachelorThesis.forename} changeContent={changeForm}/>
                     <InputRow label="Student Date Of Birth :" value={studentThesis.registrationBachelorThesis.dateOfBirth} type="date" field1="registrationBachelorThesis" field2="dateOfBirth" error={studentThesisError.registrationBachelorThesis.dateOfBirth} changeContent={changeForm}/>
@@ -268,15 +273,7 @@ const DetailThesis = () => {
                 <>
                     <br/><hr/>
                     <h3>Registration Of Bachelor Thesis</h3>
-                    <h5>Sent to Admin. Waiting for confirmation.</h5>
-                </>
-            )
-        }else if(studentThesis.registrationBachelorThesis.step === 4){
-            return (
-                <>
-                    <br/><hr/>
-                    <h3>Registration Of Bachelor Thesis</h3>
-                    <h5>Has been confirmed by Admin.</h5>
+                    <h5>The form is done.</h5>
                 </>
             )
         }
@@ -290,8 +287,8 @@ const DetailThesis = () => {
                     <br/><hr/>
                     <h3>Registration Of Oral Defense</h3>
                     <h5>Please fill in the form and send to Supervisor 1</h5>
-                    <InputRow label="Student ID :" value={studentThesis.id} isDisabled="disabled"/>
-                    <InputRow label="Student Matriculation Number :" value={studentThesis.registrationOralDefense.matriculationNumber} isDisabled="disabled" />
+                    <InputRow label="Student ID :" value={studentThesis.myInfo.id} isDisabled="disabled"/>
+                    <InputRow label="Student Matriculation Number :" value={studentThesis.registrationOralDefense.matriculationNumber} field1="registrationOralDefense" field2="matriculationNumber" error={studentThesisError.registrationOralDefense.matriculationNumber} changeContent={changeForm} />
                     <InputRow label="Student Surname :" value={studentThesis.registrationOralDefense.surname} field1="registrationOralDefense" field2="surname" error={studentThesisError.registrationOralDefense.surname} changeContent={changeForm}/>
                     <InputRow label="Student Forename :" value={studentThesis.registrationOralDefense.forename} field1="registrationOralDefense" field2="forename" error={studentThesisError.registrationOralDefense.forename} changeContent={changeForm}/>
                     <InputRow label="First Examiner :" value={studentThesis.registrationOralDefense.titleSup1} field1="registrationOralDefense" field2="titleSup1" error={studentThesisError.registrationOralDefense.titleSup1} changeContent={changeForm}/>
@@ -314,15 +311,7 @@ const DetailThesis = () => {
                 <>
                     <br/><hr/>
                     <h3>Registration Of Bachelor Thesis</h3>
-                    <h5>Sent to Admin. Waiting for confirmation.</h5>
-                </>
-            )
-        }else if(studentThesis.registrationOralDefense.step === 2){
-            return (
-                <>
-                    <br/><hr/>
-                    <h3>Registration Of Bachelor Thesis</h3>
-                    <h5>Has been confirmed by Admin.</h5>
+                    <h5>The form is done.</h5>
                 </>
             )
         }
@@ -349,6 +338,25 @@ const DetailThesis = () => {
                         <InputRow label="Step :" value={""+studentThesis.step} isDisabled="disabled"/>
                         <InputRow label="Supervisor 1 :" value={studentThesis.sup1.title + " - " + studentThesis.sup1.id + " - " + studentThesis.sup1.mail} isDisabled="disabled"/>
                         <InputRow label="Supervisor 2 :" value={studentThesis.sup2.id ? studentThesis.sup2.title + " - " + studentThesis.sup2.id + " - " + studentThesis.sup2.mail + (studentThesis.sup2.isConfirmed ? " - confirmed" : " - not confirmed") : ""} isDisabled="disabled"/>
+                        {console.log(studentThesis)}
+                        {studentThesis.step >= 4 ?
+                            <>
+                                <InputRow label="Submission Deadline :" value={studentThesis.submissionDeadline} isDisabled="disabled"/>
+                                <InputRow label="Number Of Hard Copies :" value={studentThesis.numberOfHardCopies} isDisabled="disabled"/>
+                                <InputRow label="Print Requirements :" value={studentThesis.printRequirements} isDisabled="disabled"/>
+                                <InputRow label="Template File :" value={""+studentThesis.templateFile} isDisabled="disabled"/>
+                            </>
+                            : null
+                        }
+                        {studentThesis.registrationOralDefense.proposedTime ? 
+                            <>
+                                <InputRow label="Weekday :" type="select" listContent={[{key: "0", label: "Monday"}, {key: "1", label: "Tuesday"}, {key: "2", label: "Wednesday"}, {key: "3", label: "Thursday"}, {key: "4", label: "Friday"}, {key: "5", label: "Saturday"}, {key: "6", label: "Sunday"}]} defaultValue={studentThesis.registrationOralDefense.weekday||studentThesis.registrationOralDefense.weekday==='0' ? studentThesis.registrationOralDefense.weekday : ""} isDisabled="disabled"/>
+                                <InputRow label="Date :" value={studentThesis.registrationOralDefense.proposedDate} type="date" isDisabled="disabled"/>
+                                <InputRow label="Time :" value={studentThesis.registrationOralDefense.proposedTime} isDisabled="disabled"/>
+                                <InputRow label="Room :" value={studentThesis.registrationOralDefense.room} isDisabled="disabled"/>
+                            </>
+                            : null
+                        }
                         <table className="table-content">
                             <thead>
                                 <tr>
@@ -375,8 +383,6 @@ const DetailThesis = () => {
                         </table>
                         {renderRegistrationBachelorThesis()}
                         {renderRegistrationOralDefense()}
-                        
-                        
                     </div>
                 </div>
             )
